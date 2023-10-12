@@ -1,0 +1,15 @@
+# Ignore build output
+dist/
+
+# Ignore Node.js modules
+node_modules/
+
+# Ignore TypeScript declaration files
+*.d.ts
+
+# Ignore generated JavaScript files
+*.js
+
+# Ignore specific files or directories
+somefile.ts
+somedir/

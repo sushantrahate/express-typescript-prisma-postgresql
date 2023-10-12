@@ -1,0 +1,87 @@
+{
+    "env": {
+        "es2021": true,
+        "node": true,
+        "jest": true
+    },
+    "extends": [
+        "airbnb-base",
+        "airbnb-typescript/base",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:eslint-comments/recommended",
+        "plugin:jest/recommended",
+        "plugin:promise/recommended",
+        "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.eslint.json"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "eslint-comments",
+        "jest",
+        "promise",
+        "import",
+        "prettier"
+    ],
+    "rules": {
+        "consistent-return": "off",
+        "arrow-body-style": "off",
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ],
+        "import/prefer-default-export": "off",
+        "import/no-default-export": "error",
+        "prefer-destructuring": [
+            "error",
+            {
+                "array": false,
+                "object": true
+            }
+        ],
+        "no-use-before-define": [
+            "error",
+            {
+                "functions": false,
+                "classes": true,
+                "variables": true
+            }
+        ],
+        "no-unused-vars": [
+            "error",
+            {
+                "args": "none"
+            }
+        ], // Disallow unused variables (except function arguments)
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-member-accessibility": [
+            "error",
+            {
+                "accessibility": "no-public"
+            }
+        ], // Require explicit accessibility modifiers on class members
+        "@typescript-eslint/no-unused-vars": "error", // Disallow unused variables (including function arguments)
+        "@typescript-eslint/no-use-before-define": [
+            "error",
+            {
+                "functions": false,
+                "classes": true,
+                "variables": true,
+                "typedefs": true
+            }
+        ],
+        "import/no-extraneous-dependencies": "off"
+    },
+    "settings": {
+        "import/resolver": {
+            "typescript": {
+                "alwaysTryTypes": true,
+                "project": "./tsconfig.json"
+            }
+        }
+    }
+}

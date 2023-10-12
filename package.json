@@ -1,0 +1,80 @@
+{
+  "name": "express-typescript-prisma-postgresql",
+  "version": "1.0.0",
+  "description": "This is a simple starter pack for building RESTful APIs using Express, TypeScript, Prisma, and PostgreSQL.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "db:push": "prisma db push",
+    "migrate": "npx prisma migrate dev",
+    "studio": "npx prisma studio",
+    "build": "tsc -p .",
+    "test": "jest --config=jest.config.js --detectOpenHandles",
+    "test:unit": "jest unit",
+    "test:int": "jest int",
+    "test:coverage": "jest --coverage",
+    "prebuild": "eslint .",
+    "precommit": "eslint ."
+  },
+  "keywords": [
+    "Express",
+    "Typescript",
+    "Prisma",
+    "PostgreSQL"
+  ],
+  "author": "Sushant Rahate",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.4.1",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.14",
+    "@types/express": "^4.17.18",
+    "@types/jest": "^29.5.5",
+    "@types/jsonwebtoken": "^9.0.3",
+    "@types/morgan": "^1.9.6",
+    "@types/node": "^20.8.3",
+    "@types/supertest": "^2.0.14",
+    "@types/validator": "^13.11.2",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jest": "^27.4.2",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "prettier": "^3.0.3",
+    "prisma": "^5.4.1",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-build": "npm run prebuild",
+      "pre-commit": "npm run precommit"
+    }
+  }
+}
