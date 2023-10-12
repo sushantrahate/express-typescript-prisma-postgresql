@@ -141,7 +141,7 @@ const registerUser = async (
 
       return res
         .status(201)
-        .json(createResponse(true, token, SUCCESS.REGISTRATION_SUCCESSFUL));
+        .json(createResponse(true, { token }, SUCCESS.REGISTRATION_SUCCESSFUL));
     }
 
     return res
