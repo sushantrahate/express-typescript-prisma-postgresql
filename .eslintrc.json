@@ -7,15 +7,16 @@
     "extends": [
         "airbnb-base",
         "airbnb-typescript/base",
+        "plugin:import/typescript",
         "plugin:@typescript-eslint/recommended",
         "plugin:eslint-comments/recommended",
         "plugin:jest/recommended",
         "plugin:promise/recommended",
-        "prettier"
+        "prettier" // Keep at end
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "./tsconfig.eslint.json"
+        "project": "./tsconfig.eslint.json" // To work with tsconfig
     },
     "plugins": [
         "@typescript-eslint",

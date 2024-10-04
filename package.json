@@ -14,8 +14,8 @@
     "test:unit": "jest unit",
     "test:int": "jest int",
     "test:coverage": "jest --coverage",
-    "prebuild": "eslint .",
-    "precommit": "eslint ."
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix ."
   },
   "keywords": [
     "Express",
@@ -73,8 +73,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-build": "npm run prebuild",
-      "pre-commit": "npm run precommit"
+      "pre-build": "npm run lint",
+      "pre-commit": "npm run lint"
     }
   }
 }
