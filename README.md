@@ -38,7 +38,7 @@ express-typescript-prisma-postgresql
 
 - Install the project's npm dependencies by running `npm i`
 - Apply schema changes to your database `npm run db:push`
-- Run `npm run dev` for starting local API server
+- Run `npm run dev` for starting local API server, server starts on `http://localhost:4000/`
 
 ## Debug in VSCode
 
