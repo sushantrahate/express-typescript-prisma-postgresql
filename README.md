@@ -412,6 +412,12 @@ npm run format
 
 ## ⚡ Vitest for Unit Testing
 
+```bash
+npm install --save-dev vitest @vitest/coverage-v8 @types/jest supertest @types/supertest
+```
+
+Create test files at `src\features\user\__tests__`
+
 ## ⚡ Security
 
 ```sh
