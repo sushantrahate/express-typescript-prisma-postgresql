@@ -7,7 +7,7 @@ Designed to be modular and maintainable, the project features a clean architectu
 ## ✨ Features
 
 🛠️ Core Features
-✅ TypeScript – Fully typed backend for maintainability
+✅ TypeScript – Fully typed backend for maintainability\n
 ✅ Express.js – Lightweight and fast web framework
 ✅ Prisma ORM – Type-safe database interactions
 ✅ PostgreSQL – Relational database
