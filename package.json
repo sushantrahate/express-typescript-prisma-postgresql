@@ -1,0 +1,60 @@
+{
+  "name": "express-typescript-prisma-postgresql",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "npm run lint && npm run format",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/server.js",
+    "dev": "nodemon --ext ts --exec tsx src/server.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext ts --fix",
+    "format": "prettier --write .",
+    "test": "vitest",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "Express",
+    "Typescript",
+    "Prisma",
+    "PostgreSQL"
+  ],
+  "author": "Sushant Rahate",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.9",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-security": "^3.0.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unicorn": "^57.0.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3",
+    "prisma": "^6.4.1",
+    "tsc-alias": "^1.8.11",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "uni-response": "^1.0.3",
+    "zod": "^3.24.2"
+  }
+}

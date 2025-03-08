@@ -1,0 +1,25 @@
+# Ignore build and dependencies
+node_modules
+dist
+coverage
+
+# Prisma migrations
+prisma/migrations
+
+# Logs and environment files
+logs
+*.log
+.env
+.env.local
+.env.development
+.env.production
+
+# Ignore lock files (if needed)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Ignore test coverage reports
+coverage
+
+*.md

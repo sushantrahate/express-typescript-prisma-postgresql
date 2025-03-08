@@ -1,0 +1,24 @@
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+npm-debug.log
+testem.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Local env files
+.env
+
+# Ignore Node.js modules
+node_modules/
+dist/
+
+info.txt

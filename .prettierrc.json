@@ -1,0 +1,31 @@
+{
+  "printWidth": 100,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "arrowParens": "avoid",
+  "jsxSingleQuote": false,
+  "jsxBracketSameLine": false,
+  "proseWrap": "always",
+  "quoteProps": "as-needed",
+  "bracketSpacing": true,
+  "insertPragma": false,
+  "requirePragma": false,
+  "embeddedLanguageFormatting": "auto",
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.prisma"],
+      "options": {
+        "tabWidth": 2
+      }
+    }
+  ]
+}
