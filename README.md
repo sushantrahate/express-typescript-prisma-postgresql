@@ -392,7 +392,7 @@ npx husky add .husky/pre-push "npm run lint && npm run format && npm run test &&
     "lint:fix": "eslint . --ext ts --fix",
     "format": "prettier --write .",
     "test": "vitest",
-    "prepare": "husky install"
+    "prepare": "npx husky install"
   }
 ```
 
