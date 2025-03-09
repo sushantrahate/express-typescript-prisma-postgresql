@@ -286,7 +286,7 @@ npm install --save-dev @types/express @types/cors
 ## ⚡ ESLint, Prettier & Linting Plugins
 
 ```bash
-npm install --save-dev eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier eslint-plugin-node eslint-plugin-import eslint-plugin-simple-import-sort eslint-plugin-unicorn eslint-plugin-security
+npm install --save-dev eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier eslint-plugin-node eslint-plugin-import eslint-plugin-simple-import-sort eslint-plugin-unicorn eslint-plugin-security eslint-config-prettier
 ```
 
 > Create `eslint.config.js`

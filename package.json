@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "prebuild": "npm run lint && npm run format && npm run test",
-    "build": "tsc && tsc-alias",
+    "prebuild": "npm run lint && npm run format && npm run test:ci",
+    "build": "rm -rf dist && tsc && tsc-alias",
     "start": "node dist/server.js",
     "dev": "nodemon --ext ts --exec tsx src/server.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext ts --fix",
     "format": "prettier --write .",
     "test": "vitest",
-    "prepare": "husky install"
+    "test:ci": "vitest --run",
+    "prepare": "npx husky install"
   },
   "keywords": [
     "Express",
@@ -34,7 +35,8 @@
     "@typescript-eslint/eslint-plugin": "^8.26.0",
     "@typescript-eslint/parser": "^8.26.0",
     "@vitest/coverage-v8": "^3.0.8",
-    "eslint": "^9.21.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.2.3",
