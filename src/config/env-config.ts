@@ -1,3 +1,4 @@
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 import { envSchema, EnvVars } from './env-schema';
@@ -5,7 +6,14 @@ import { envSchema, EnvVars } from './env-schema';
 // Determine which .env file to load based on NODE_ENV
 // eslint-disable-next-line node/no-process-env
 const envFile = `.env.${process.env.NODE_ENV || 'dev'}`;
-dotenv.config({ path: envFile });
+
+if (fs.existsSync(envFile)) {
+  dotenv.config({ path: envFile });
+  // eslint-disable-next-line node/no-process-env
+  console.log(`✅ Loaded environment: ${envFile}\nNODE_ENV: ${process.env.NODE_ENV}`);
+} else {
+  console.warn(`⚠️ Warning: Environment file "${envFile}" not found. Using defaults.`);
+}
 
 // eslint-disable-next-line node/no-process-env
 const parsedEnv = envSchema.safeParse(process.env);

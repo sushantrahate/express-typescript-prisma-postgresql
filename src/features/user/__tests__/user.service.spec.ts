@@ -3,7 +3,7 @@ import { unifiedResponse } from 'uni-response';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ERROR, SUCCESS } from '../../../constants/messages';
-import { generateToken } from '../../../utils/generateToken.util';
+import { generateToken } from '../../../utils/generate-token.util';
 import { UserRepository } from '../repositories/user.repository';
 import { UserService } from '../services/user.service';
 

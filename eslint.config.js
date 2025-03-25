@@ -54,6 +54,13 @@ export default [
 
       // Import rules (no extension enforcement)
       'import/extensions': 'off',
+      'unicorn/filename-case': [
+        'error',
+        {
+          case: 'kebabCase',
+          ignore: ['README.md'],
+        },
+      ],
     },
   },
   // Turn off ESLint rules that conflict with Prettier

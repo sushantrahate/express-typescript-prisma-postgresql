@@ -424,6 +424,15 @@ Create test files at `src\features\user\__tests__`
 npm i helmet express-rate-limit
 ```
 
+## ⚡ Logger
+
+```bash
+npm install pino pino-pretty pino-http
+npm install -D @types/pino @types/pino-pretty @types/pino-http
+```
+
+Create src\middleware\pino-logger.ts
+
 ## ⚡ Constants
 
 ## ⚡ Middleware

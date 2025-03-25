@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { unifiedResponse } from 'uni-response';
 
 import { ERROR, SUCCESS } from '../../../constants/messages';
-import { generateToken } from '../../../utils/generateToken.util';
+import { generateToken } from '../../../utils/generate-token.util';
 import { UserRepository } from '../repositories/user.repository';
 import { LoginInputTypes, RegisterInputTypes } from '../types/user.types';
 
