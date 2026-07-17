@@ -5,8 +5,9 @@ export const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   DATABASE_URL: z.string().url(),
-  SHADOW_DATABASE_URL: z.string().url(),
+  SHADOW_DATABASE_URL: z.string().url().optional(),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
+  JWT_EXPIRES_IN: z.string().default('1d'),
   WHITE_LIST_URLS: z
     .string()
     .transform(value => value.split(',').map(url => url.trim()))

@@ -11,7 +11,7 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 export default [
   // Ignore patterns
   {
-    ignores: ['dist', 'node_modules', 'prisma'],
+    ignores: ['dist', 'node_modules', 'prisma', 'vitest.config.ts', 'vitest.setup.ts'],
   },
   // Base config for TypeScript files
   {
@@ -58,7 +58,7 @@ export default [
         'error',
         {
           case: 'kebabCase',
-          ignore: ['README.md'],
+          ignore: ['README.md', '__tests__'],
         },
       ],
     },

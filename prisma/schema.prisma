@@ -20,14 +20,16 @@ model User {
   roleId    String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  updatedAt DateTime @updatedAt
   // Relationships
   role      Roles?   @relation(fields: [roleId], references: [id])
+
+  @@index([roleId])
 }
 
 model Roles {
-  id     String @id @default(uuid())
+  id     String  @id @default(uuid())
   name   String
-  active Int    @default(1) @db.SmallInt
+  active Boolean @default(true)
   user   User[]
 }

@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import { PrismaService } from '../../../config/prisma.config';
 import { auth } from '../../../middleware/auth.middleware';
+import { authRateLimiter } from '../../../middleware/security.middleware';
 import { validateRequest } from '../../../middleware/validation.middleware';
 import { UserController } from '../controllers/user.controller';
 import { UserRepository } from '../repositories/user.repository';
@@ -18,8 +19,8 @@ const userController = new UserController(userService);
 const router = Router();
 
 router.get('/', userController.heartbeat);
-router.post('/register', validateRequest(registerSchema), userController.register);
-router.post('/login', validateRequest(loginSchema), userController.login);
+router.post('/register', authRateLimiter, validateRequest(registerSchema), userController.register);
+router.post('/login', authRateLimiter, validateRequest(loginSchema), userController.login);
 
 router.get('/profile', auth, userController.getProfile);
 

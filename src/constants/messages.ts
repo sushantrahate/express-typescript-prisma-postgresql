@@ -20,4 +20,5 @@ export const ERROR = {
   ORIGIN_HEADER_IS_MISSING: 'Origin header is missing',
   ACCESS_FORBIDDEN: 'Access Forbidden',
   ROUTE_NOT_FOUND: 'Route not found or wrong API method',
+  UNAUTHORIZED: 'Unauthorized',
 };

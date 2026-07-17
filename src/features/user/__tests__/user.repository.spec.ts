@@ -3,14 +3,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { UserRepository } from '../repositories/user.repository';
 
-// ✅ Properly mock PrismaClient
+// ✅ Properly mock PrismaClient (must be a real constructor function, not an arrow function,
+// so `new PrismaClient()` works)
 vi.mock('@prisma/client', () => ({
-  PrismaClient: vi.fn().mockImplementation(() => ({
-    user: {
-      findUnique: vi.fn(), // ✅ Ensure these are properly mocked
-      create: vi.fn(),
-    },
-  })),
+  PrismaClient: vi.fn().mockImplementation(function PrismaClientMock() {
+    return {
+      user: {
+        findUnique: vi.fn(), // ✅ Ensure these are properly mocked
+        create: vi.fn(),
+      },
+    };
+  }),
 }));
 
 describe('UserRepository', () => {

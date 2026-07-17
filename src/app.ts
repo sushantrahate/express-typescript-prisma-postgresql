@@ -5,27 +5,24 @@ import helmet from 'helmet';
 import { env } from './config/env-config';
 import userRoutes from './features/user/routes/user.routes';
 import { apiErrorHandler, unmatchedRoutes } from './middleware/api-error.middleware';
-import { pinoLogger, loggerMiddleware } from './middleware/pino-logger';
-// import morgan from 'morgan';
+import { pinoLogger } from './middleware/pino-logger';
 import { hostWhitelist, rateLimiter } from './middleware/security.middleware';
 
 const app: Application = express();
 
+const allowedURLs = env.WHITE_LIST_URLS || [];
+
+// Request logging (attaches `req.log`) — runs first so it covers every request,
+// including ones that fail during body parsing below.
+app.use(pinoLogger);
+
 // Security middleware
-// app.use(hostWhitelist);
 app.use(rateLimiter);
 app.use(helmet());
 
 // Global Middlewares
 app.use(express.json());
-app.use(cors()); // Enables CORS
-
-// TODO: logger
-app.use(loggerMiddleware);
-app.use(pinoLogger);
-// if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
-
-const allowedURLs = env.WHITE_LIST_URLS || [];
+app.use(cors({ origin: allowedURLs })); // Restrict CORS to the configured whitelist
 
 app.get('/', hostWhitelist(allowedURLs), (req: Request, res: Response): void => {
   res.json('');

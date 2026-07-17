@@ -11,7 +11,6 @@ const secret: Secret = env.JWT_SECRET as string;
 interface AuthPayload {
   userId: string;
   role: string;
-  dealerId: string;
 }
 
 // Augment the Express Request object to include custom properties
@@ -20,7 +19,6 @@ declare global {
     interface Request {
       userId?: string;
       role?: string;
-      dealerId?: string;
     }
   }
 }
@@ -51,7 +49,6 @@ class AuthService {
       const decodedToken = jwt.verify(token, this.secret) as AuthPayload;
       req.userId = decodedToken.userId;
       req.role = decodedToken.role;
-      req.dealerId = decodedToken.dealerId;
 
       next(); // Call the next middleware
     } catch (error) {
@@ -78,7 +75,6 @@ class AuthService {
         if (allowedRoles.includes(decodedToken.role)) {
           req.userId = decodedToken.userId;
           req.role = decodedToken.role;
-          req.dealerId = decodedToken.dealerId;
 
           next();
           return;

@@ -2,19 +2,24 @@ import { NextFunction, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import { unifiedResponse } from 'uni-response';
 
+import { RATE_LIMIT } from '../constants/config.constants';
 import { ERROR } from '../constants/messages';
 
-/* The `const rateLimiter` declaration is creating a rate-limiting middleware using the
-`express-rate-limit` package. It is configuring the rate limiter to allow a maximum of 100 requests
-per IP address within a 15-minute window. Additionally, it is specifying to return rate limit
-information in the `RateLimit-*` headers and disable the `X-RateLimit-*` headers. This middleware
-will help prevent abuse or excessive requests from a single IP address by enforcing the specified
-rate limit. */
+// General limiter applied to all routes.
 const rateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  windowMs: RATE_LIMIT.GLOBAL_WINDOW_MS,
+  max: RATE_LIMIT.GLOBAL_MAX,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Tighter limiter for credential-stuffing/brute-force-prone auth routes (login/register).
+const authRateLimiter = rateLimit({
+  windowMs: RATE_LIMIT.AUTH_WINDOW_MS,
+  max: RATE_LIMIT.AUTH_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: unifiedResponse(false, 'Too many attempts, please try again later'),
 });
 
 // Middleware to check host whitelist
@@ -48,4 +53,4 @@ const hostWhitelist = (allowedUrls: string[]) => {
   };
 };
 
-export { hostWhitelist, rateLimiter };
+export { authRateLimiter, hostWhitelist, rateLimiter };

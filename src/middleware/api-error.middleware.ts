@@ -2,10 +2,7 @@ import { Prisma } from '@prisma/client';
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { unifiedResponse } from 'uni-response';
 
-import { env } from '../config/env-config';
 import { ERROR } from '../constants/messages';
-
-const environment = env.NODE_ENV || 'prod';
 
 const checkContentType = (req: Request, res: Response, next: NextFunction) => {
   const contentType = req.get('Content-Type');
@@ -36,7 +33,7 @@ const checkContentTypeAsURLEncodedFormData = (
   next();
 };
 
-// Middleware to check host whitelist
+// Central error-handling middleware (catches errors passed to `next(err)`).
 const apiErrorHandler = (
   err: ErrorRequestHandler,
   req: Request,
@@ -44,9 +41,8 @@ const apiErrorHandler = (
 
   next: NextFunction,
 ): void => {
-  if (environment === 'development') {
-    console.log('err', err);
-  }
+  req.log?.error({ err }, 'Unhandled request error');
+
   if (
     err instanceof SyntaxError &&
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,24 +62,14 @@ const apiErrorHandler = (
       return;
     }
   }
-  if (err instanceof Prisma.PrismaClientUnknownRequestError) {
-    res.status(400).json(unifiedResponse(false, err?.message));
-    return;
-  }
-  if (err instanceof Prisma.PrismaClientRustPanicError) {
-    res.status(400).json(unifiedResponse(false, err?.message));
-    return;
-  }
-  if (err instanceof Prisma.PrismaClientRustPanicError) {
-    res.status(400).json(unifiedResponse(false, err?.message));
-    return;
-  }
-  if (err instanceof Prisma.PrismaClientInitializationError) {
-    res.status(400).json(unifiedResponse(false, err?.message));
-    return;
-  }
-  if (err instanceof Prisma.PrismaClientValidationError) {
-    res.status(400).json(unifiedResponse(false, err?.message));
+  if (
+    err instanceof Prisma.PrismaClientUnknownRequestError ||
+    err instanceof Prisma.PrismaClientRustPanicError ||
+    err instanceof Prisma.PrismaClientInitializationError ||
+    err instanceof Prisma.PrismaClientValidationError
+  ) {
+    // Internal Prisma error details are logged above but not exposed to the client.
+    res.status(400).json(unifiedResponse(false, ERROR.BAD_REQUEST));
     return;
   }
   // Handle other errors
@@ -92,6 +78,7 @@ const apiErrorHandler = (
 };
 
 const unmatchedRoutes = (req: Request, res: Response): void => {
+  req.log?.info({ method: req.method, url: req.originalUrl }, 'Unmatched route');
   res.status(404).json(unifiedResponse(false, ERROR.ROUTE_NOT_FOUND));
   return;
 };

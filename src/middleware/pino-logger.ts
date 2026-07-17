@@ -1,10 +1,10 @@
 // src/middleware/pino-logger.ts
+import { randomUUID } from 'crypto';
+import { Request, Response } from 'express';
+import { ensureDir } from 'fs-extra'; // Optional: to ensure log directory exists
+import { join } from 'path';
 import pino, { Logger } from 'pino';
 import pinoHttp from 'pino-http';
-import { Request, Response, NextFunction } from 'express';
-import { join } from 'path';
-import { ensureDir } from 'fs-extra'; // Optional: to ensure log directory exists
-import { randomUUID } from 'crypto';
 
 // Extend Express Request interface to include logger
 declare global {
@@ -29,26 +29,42 @@ const logFile = join(logDir, 'app.log');
 })();
 
 // Production: Write to file, Development: Pretty print
-const transport =
-  process.env.NODE_ENV === 'development'
-    ? {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'SYS:yyyy-mm-dd HH:mm:ss',
-          ignore: 'pid,hostname',
-        },
-      }
-    : {
-        target: 'pino/file',
-        options: { destination: logFile },
-      };
+// eslint-disable-next-line node/no-process-env
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-const logger = pino({
+const transport = isDevelopment
+  ? {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'SYS:yyyy-mm-dd HH:mm:ss',
+        ignore: 'pid,hostname',
+      },
+    }
+  : {
+      target: 'pino/file',
+      options: { destination: logFile },
+    };
+
+export const logger = pino({
+  // eslint-disable-next-line node/no-process-env
   level: process.env.LOG_LEVEL || 'info', // Default to 'info' if not set
   transport,
+  redact: {
+    paths: [
+      'req.headers.authorization',
+      'req.headers.cookie',
+      'req.body.password',
+      'req.body.password2',
+      '*.password',
+      '*.password2',
+      '*.token',
+    ],
+    censor: '[REDACTED]',
+  },
 });
 
+// Attaches `req.log` (a child logger with request-scoped bindings) to every request.
 export const pinoLogger = pinoHttp({
   logger,
   // Generate UUID for each request using crypto
@@ -62,8 +78,3 @@ export const pinoLogger = pinoHttp({
     return `${req.method} ${req.url} [reqId: ${req.id}] failed with ${err.message}`;
   },
 });
-
-export const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  req.log = logger; // Attach logger to request object
-  next();
-};

@@ -71,9 +71,10 @@ describe('User Routes Configuration', () => {
     expect(routeLayer).toBeDefined();
     expect(routeLayer?.route).toBeDefined();
     if (routeLayer?.route) {
-      expect(routeLayer.route.stack.length).toBe(2); // Middleware + handler
-      expect(routeLayer.route.stack[0].handle).not.toBeUndefined(); // validateRequest
-      expect(routeLayer.route.stack[1].handle).not.toBeUndefined(); // register
+      expect(routeLayer.route.stack.length).toBe(3); // rate limiter + validateRequest + handler
+      expect(routeLayer.route.stack[0].handle).not.toBeUndefined(); // authRateLimiter
+      expect(routeLayer.route.stack[1].handle).not.toBeUndefined(); // validateRequest
+      expect(routeLayer.route.stack[2].handle).not.toBeUndefined(); // register
     }
   });
 
@@ -84,9 +85,10 @@ describe('User Routes Configuration', () => {
     expect(routeLayer).toBeDefined();
     expect(routeLayer?.route).toBeDefined();
     if (routeLayer?.route) {
-      expect(routeLayer.route.stack.length).toBe(2); // Middleware + handler
-      expect(routeLayer.route.stack[0].handle).not.toBeUndefined(); // validateRequest
-      expect(routeLayer.route.stack[1].handle).not.toBeUndefined(); // login
+      expect(routeLayer.route.stack.length).toBe(3); // rate limiter + validateRequest + handler
+      expect(routeLayer.route.stack[0].handle).not.toBeUndefined(); // authRateLimiter
+      expect(routeLayer.route.stack[1].handle).not.toBeUndefined(); // validateRequest
+      expect(routeLayer.route.stack[2].handle).not.toBeUndefined(); // login
     }
   });
 

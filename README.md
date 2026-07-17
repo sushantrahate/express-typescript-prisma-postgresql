@@ -19,18 +19,22 @@ Designed to be modular and maintainable, the project features a clean architectu
 ✅ VSCode debugger\
 \
 🔐 Environment & Security\
-✅ Environment Validation – Ensures required .env variables exist\
+✅ Environment Validation – Ensures required .env variables exist (Zod), fails fast on startup\
 ✅ Helmet & Security Headers – Protects against web vulnerabilities\
-✅ Rate Limiter, Host whitelisting middleware\
+✅ CORS Whitelisting – `cors()` restricted to `WHITE_LIST_URLS`, not left open to any origin\
+✅ Rate Limiting – Global limiter plus a stricter limiter scoped to `/login` and `/register`\
+✅ Configurable JWT Expiry – `JWT_EXPIRES_IN` (defaults to a short-lived `1d`, not 30 days)\
+✅ Structured Logging with Redaction – Pino redacts `authorization` headers and password fields\
 \
 ⚡ API & Middleware\
 ✅ Request Validation – Uses Zod for body, params, and query validation\
-✅ Error Handling Middleware – Centralized error handling with PostgreSQL error handling [(Ref)](https://www.prisma.io/docs/orm/reference/error-reference)\
+✅ Error Handling Middleware – Centralized error handling with PostgreSQL error handling [(Ref)](https://www.prisma.io/docs/orm/reference/error-reference); internal error details are logged server-side but never leaked to the client\
 ✅ Unified Response Structure – Uses [uni-response](https://github.com/sushantrahate/uni-response) for consistent API responses\
 \
 🧪 Testing & CI/CD\
-✅ Vitest – Unit and integration testing\
-✅ Husky + Lint-Staged – Enforces pre-commit linting and testing\
+✅ Vitest – Unit and integration testing (via Supertest), with enforced coverage thresholds\
+✅ Husky + Lint-Staged – Enforces pre-commit linting and formatting on staged files\
+✅ GitHub Actions – Lint, format check, typecheck, test, and build run on every push/PR ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))\
 \
 🛑 Server Management\
 ✅ Graceful Shutdown – Ensures proper cleanup of database & open connections during shutdown [(Ref)](https://github.com/sushantrahate/secure-nodejs-backend/tree/main/graceful-shutdown)
@@ -44,11 +48,18 @@ This project follows a feature-based modular structure, where each feature (e.g.
 📂 Project Structure:
 
 ```bash
+.github/
+│── workflows/
+│   ├── ci.yml       # Lint, format check, typecheck, test, build on push/PR
+prisma/
+│── migrations/      # Prisma migration history
+│── schema.prisma
 src/
-│── config/         # Configuration (e.g., environment variables, Prisma, security)
-│── constants/      # Shared constants (messages, enums, etc.)
-│── features/       # Feature-based modular structure
-│   ├── user/       # User feature module
+│── config/          # Configuration (env vars, Prisma, security)
+│   ├── __tests__/   # Unit tests for env schema, etc.
+│── constants/       # Shared constants (messages, rate-limit/bcrypt config, etc.)
+│── features/        # Feature-based modular structure
+│   ├── user/        # User feature module
 │   │   ├── __tests__/      # Unit tests (vitest)
 │   │   ├── controllers/    # Handles HTTP requests (Express-dependent)
 │   │   ├── repositories/   # Database interactions (Prisma-dependent)
@@ -56,10 +67,17 @@ src/
 │   │   ├── schemas/        # Zod validation schemas (Framework-agnostic)
 │   │   ├── services/       # Business logic (Completely framework-independent)
 │   │   ├── types/          # TypeScript interfaces & types
-│── middleware/      # Global Express middlewares
-│── utils/           # Helper functions
-│── app.ts           # Express app setup
-│── server.ts        # Entry point
+│── middleware/       # Global Express middlewares
+│   ├── __tests__/    # Unit tests for auth, security, validation, error middleware
+│── utils/            # Helper functions
+│   ├── __tests__/    # Unit tests for utils
+│── __tests__/        # App-level integration tests (Supertest against the real app)
+│── app.ts            # Express app setup
+│── server.ts         # Entry point
+tsconfig.json          # Type-checking / IDE config (includes tests)
+tsconfig.build.json     # Production build config (excludes tests, extends tsconfig.json)
+vitest.config.ts        # Test runner + coverage threshold config
+vitest.setup.ts         # Shared env var bootstrap for tests
 ```
 ### 📌 Layer-by-Layer Breakdown
 
@@ -257,6 +275,21 @@ export const createUserSchema = z.object({
   </tbody>
 </table>
 
+## 🔑 Environment Variables
+
+Validated at startup by `src/config/env-schema.ts` — the app exits immediately if a required variable is missing or invalid. Copy `.env.dev.example` to `.env.dev` and fill in real values; **never commit `.env.dev`** (it's gitignored, but was accidentally committed early in this repo's history — rotate any secret you find there before reusing it).
+
+| Variable              | Required | Default       | Notes                                                              |
+| ---------------------- | -------- | ------------- | -------------------------------------------------------------------- |
+| `NODE_ENV`             | No       | `development` | `development` \| `production` \| `test`                              |
+| `PORT`                 | No       | `5000`        |                                                                        |
+| `LOG_LEVEL`            | No       | `info`        | Pino level: `fatal`\|`error`\|`warn`\|`info`\|`debug`\|`trace`\|`silent` |
+| `DATABASE_URL`         | Yes      | —             | PostgreSQL connection string                                          |
+| `SHADOW_DATABASE_URL`  | No       | —             | Only needed for `prisma migrate dev`                                  |
+| `JWT_SECRET`           | Yes      | —             | Minimum 32 characters                                                 |
+| `JWT_EXPIRES_IN`       | No       | `1d`          | Any `jsonwebtoken` `expiresIn` value                                  |
+| `WHITE_LIST_URLS`      | Yes      | —             | Comma-separated list of allowed CORS origins                          |
+
 ## ✨ Setup from scratch
 
 ## ⚡ TypeScript & Development Dependencies Setup
@@ -351,50 +384,60 @@ npx prisma migrate dev --name init
 npm install --save-dev husky lint-staged
 ```
 
-### Enable Husky
+### Enable Husky (v9+)
 
 ```bash
-npx husky install
-npm set-script prepare "husky install"
+npx husky init
+```
+
+`npm install` runs this automatically via the `prepare` script:
+
+```json
+"scripts": {
+  "prepare": "husky"
+}
 ```
 
 ### Add Pre-commit Hook
 
-```bash
-npx husky add .husky/pre-commit "npx lint-staged"
+`.husky/pre-commit`:
+
+```sh
+npx lint-staged
 ```
 
 Modify `package.json`
 
 ```json
-// Runs linters (ESLint, Prettier) only on changed files before committing.
+// Runs linters (ESLint, Prettier) only on staged files before committing.
 "lint-staged": {
-   "**/*.{ts,json,md}": ["eslint --fix", "prettier --write"]
+  "*.ts": ["eslint --fix", "prettier --write"]
 }
 ```
 
-Add Pre-Push Hook
-
-```sh
-// Before git push trigger tests & build validation.
-npx husky add .husky/pre-push "npm run lint && npm run format && npm run test && npm run build"
-```
+> `.husky/_` is regenerated on every `npm install` and is gitignored — only `.husky/pre-commit` (and any other hook files you add) should be committed.
 
 ## ⚡ Add Scripts in package.json
 
 ```json
 "scripts": {
-    "prebuild": "npm run lint && npm run format && npm run test",
-    "build": "tsc",
+    "prebuild": "npm run lint && npm run format:check && npm run typecheck && npm run test:ci",
+    "build": "rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/server.js",
     "dev": "nodemon --ext ts --exec tsx src/server.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext ts --fix",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "prepare": "npx husky install"
+    "test:ci": "vitest --run",
+    "postinstall": "prisma generate",
+    "prepare": "husky"
   }
 ```
+
+> `build` uses `tsconfig.build.json` (which extends `tsconfig.json` and excludes `**/*.spec.ts` / `__tests__/`) so test files never end up compiled into `dist`. Everyday type-checking (`typecheck`, the IDE, ESLint's type-aware parsing) uses the base `tsconfig.json`, which *does* include tests.
 
 ## ⚡ Run the Project
 
@@ -410,13 +453,24 @@ npm run lint:fix
 npm run format
 ```
 
-## ⚡ Vitest for Unit Testing
+## ⚡ Vitest for Unit & Integration Testing
 
 ```bash
-npm install --save-dev vitest @vitest/coverage-v8 @types/jest supertest @types/supertest
+npm install --save-dev vitest @vitest/coverage-v8 supertest @types/supertest
 ```
 
-Create test files at `src\features\user\__tests__`
+> Only install `@types/supertest` — `supertest` itself is what you write integration tests against (via `import request from 'supertest'`). Don't add `@types/jest`; this project uses Vitest's own globals, not Jest's.
+
+Create `vitest.config.ts` (test include pattern, `setupFiles`, and `coverage.thresholds`) and `vitest.setup.ts` (default env vars so any spec that transitively imports `src/config/env-config.ts` doesn't need a real `.env` file).
+
+Test files live next to the code they cover, under a local `__tests__/` folder:
+
+- `src/features/user/__tests__/`
+- `src/middleware/__tests__/`
+- `src/utils/__tests__/`
+- `src/config/__tests__/`
+
+App-level integration tests (Supertest against the real `app` instance, for routes/behavior that doesn't require a live database — 404 handling, CORS, validation) live in `src/__tests__/`.
 
 ## ⚡ Security
 
@@ -424,19 +478,48 @@ Create test files at `src\features\user\__tests__`
 npm i helmet express-rate-limit
 ```
 
+Two rate limiters are configured in `src/middleware/security.middleware.ts` (values centralized in `src/constants/config.constants.ts`):
+
+- `rateLimiter` — applied globally.
+- `authRateLimiter` — a tighter limit applied only to `/login` and `/register`, to slow down credential stuffing.
+
+CORS is restricted to `WHITE_LIST_URLS` (`app.use(cors({ origin: allowedURLs }))`) rather than left open to any origin.
+
 ## ⚡ Logger
 
 ```bash
 npm install pino pino-pretty pino-http
-npm install -D @types/pino @types/pino-pretty @types/pino-http
 ```
 
-Create src\middleware\pino-logger.ts
+> Don't install `@types/pino`, `@types/pino-http`, or `@types/pino-pretty` — those are deprecated stub packages; the real packages ship their own types.
+
+Create `src/middleware/pino-logger.ts`. It exports:
+
+- `logger` — the base Pino instance (with `redact` configured for `authorization` headers and password/token fields), for use outside request context (e.g. `server.ts`).
+- `pinoLogger` — the `pino-http` middleware that attaches a request-scoped `req.log`.
+
+Mount `pinoLogger` **before** `express.json()`/other middleware in `app.ts` so that requests failing during body parsing are still logged.
 
 ## ⚡ Constants
+
+Shared, non-secret configuration values (rate-limit windows/maxes, bcrypt salt rounds) live in `src/constants/config.constants.ts`; user-facing message strings live in `src/constants/messages.ts`.
 
 ## ⚡ Middleware
 
 ## ⚡ Utils
+
+## ⚡ CI/CD
+
+`.github/workflows/ci.yml` runs on every push/PR to `main`: install → lint → format check → typecheck → test → build. It sets placeholder env vars (`DATABASE_URL`, `JWT_SECRET`, etc.) directly in the workflow so the pipeline doesn't depend on a real database or secrets.
+
+## ⚡ A Note on Pinned Major Versions
+
+A few dependencies are intentionally held back from their newest major release because the surrounding ecosystem isn't ready yet — check before bumping further:
+
+- **Prisma stays on the 6.x line.** Prisma 7 removes `datasource.url`/`shadowDatabaseUrl` from `schema.prisma` entirely in favor of a `prisma.config.ts` + driver-adapter (`@prisma/adapter-pg`) setup — a data-layer rewrite, not a drop-in bump.
+- **ESLint stays on the 9.x line.** `eslint-plugin-import`'s peer range still caps at `^9`; `eslint-plugin-unicorn` is pinned to `65.0.1` (the last release supporting ESLint 9) since `70+` requires ESLint `>=10.4`.
+- **TypeScript stays on the 5.x line.** TypeScript 7 is too new for confident `typescript-eslint`/`tsc-alias` compatibility.
+
+If you upgrade any of these, re-run `npm run lint && npm run typecheck && npm run test:ci && npm run build` and fix what breaks before merging.
 
 If you liked it then please show your love by ⭐ the repo

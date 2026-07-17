@@ -11,7 +11,7 @@ export const validateRequest = (schema: ZodSchema<unknown>) => {
 
     if (!validationResult.success) {
       // Extract error messages
-      const errorMessages = validationResult.error.errors.map(err => ({
+      const errorMessages = validationResult.error.issues.map(err => ({
         path: err.path.join('.'),
         message: err.message,
       }));

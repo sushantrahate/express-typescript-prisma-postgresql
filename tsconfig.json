@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "baseUrl": "./",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "paths": {
@@ -11,6 +10,7 @@
     "types": ["node"],
     "strict": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -20,5 +20,5 @@
     "resolveFullPaths": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "__tests__", "coverage"]
+  "exclude": ["node_modules", "dist", "coverage"]
 }

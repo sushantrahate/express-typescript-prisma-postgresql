@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_ENV: test
+  PORT: 5000
+  LOG_LEVEL: silent
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ci_db?schema=public
+  JWT_SECRET: ci_only_placeholder_secret_at_least_32_chars
+  JWT_EXPIRES_IN: 1d
+  WHITE_LIST_URLS: https://example.com
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test:ci
+
+      - name: Build
+        run:
+          npx rimraf dist && npx tsc -p tsconfig.build.json && npx tsc-alias -p tsconfig.build.json

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { unifiedResponse } from 'uni-response';
 
+import { BCRYPT_SALT_ROUNDS } from '../../../constants/config.constants';
 import { ERROR, SUCCESS } from '../../../constants/messages';
 import { generateToken } from '../../../utils/generate-token.util';
 import { UserRepository } from '../repositories/user.repository';
@@ -38,7 +39,7 @@ export class UserService {
       return unifiedResponse(false, ERROR.USER_EXISTS_WITH_EMAIL);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
     const newUser = await this.userRepository.createUser({
       email,
       password: hashedPassword,

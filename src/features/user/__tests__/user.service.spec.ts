@@ -14,7 +14,7 @@ vi.mock('bcrypt', () => {
   };
 });
 
-vi.mock('../../../utils/generateToken.util', () => ({
+vi.mock('../../../utils/generate-token.util', () => ({
   generateToken: vi.fn(),
 }));
 

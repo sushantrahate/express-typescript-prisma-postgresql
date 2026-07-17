@@ -6,8 +6,6 @@
   "tabWidth": 2,
   "endOfLine": "lf",
   "arrowParens": "avoid",
-  "jsxSingleQuote": false,
-  "jsxBracketSameLine": false,
   "proseWrap": "always",
   "quoteProps": "as-needed",
   "bracketSpacing": true,
