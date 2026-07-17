@@ -51,6 +51,7 @@ This project follows a feature-based modular structure, where each feature (e.g.
 .github/
 │── workflows/
 │   ├── ci.yml       # Lint, format check, typecheck, test, build on push/PR
+│── dependabot.yml   # Automated weekly dependency update PRs (npm + GitHub Actions)
 prisma/
 │── migrations/      # Prisma migration history
 │── schema.prisma
@@ -78,6 +79,9 @@ tsconfig.json          # Type-checking / IDE config (includes tests)
 tsconfig.build.json     # Production build config (excludes tests, extends tsconfig.json)
 vitest.config.ts        # Test runner + coverage threshold config
 vitest.setup.ts         # Shared env var bootstrap for tests
+LICENSE                 # MIT-0 (MIT No Attribution)
+SECURITY.md             # Vulnerability reporting policy
+CONTRIBUTING.md         # Contribution guidelines
 ```
 ### 📌 Layer-by-Layer Breakdown
 
@@ -512,6 +516,8 @@ Shared, non-secret configuration values (rate-limit windows/maxes, bcrypt salt r
 
 `.github/workflows/ci.yml` runs on every push/PR to `main`: install → lint → format check → typecheck → test → build. It sets placeholder env vars (`DATABASE_URL`, `JWT_SECRET`, etc.) directly in the workflow so the pipeline doesn't depend on a real database or secrets.
 
+`.github/dependabot.yml` opens weekly PRs for outdated npm packages (grouped into separate dev-/production-dependency PRs) and GitHub Actions versions. See the "A Note on Pinned Major Versions" section below before merging a major-version bump.
+
 ## ⚡ A Note on Pinned Major Versions
 
 A few dependencies are intentionally held back from their newest major release because the surrounding ecosystem isn't ready yet — check before bumping further:
@@ -521,5 +527,20 @@ A few dependencies are intentionally held back from their newest major release b
 - **TypeScript stays on the 5.x line.** TypeScript 7 is too new for confident `typescript-eslint`/`tsc-alias` compatibility.
 
 If you upgrade any of these, re-run `npm run lint && npm run typecheck && npm run test:ci && npm run build` and fix what breaks before merging.
+
+## 🤝 Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, the
+verification commands to run before opening a PR, and project conventions.
+
+## 🛡️ Security
+
+Found a vulnerability? Please don't open a public issue — see
+[SECURITY.md](SECURITY.md) for how to report it privately.
+
+## 📄 License
+
+Licensed under [MIT-0](LICENSE) (MIT No Attribution) — use it freely, no attribution
+required.
 
 If you liked it then please show your love by ⭐ the repo

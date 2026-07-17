@@ -24,7 +24,7 @@
     "PostgreSQL"
   ],
   "author": "Sushant Rahate",
-  "license": "MIT",
+  "license": "MIT-0",
   "description": "",
   "lint-staged": {
     "*.ts": [
