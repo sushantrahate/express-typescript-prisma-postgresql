@@ -1,12 +1,13 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
+import { unifiedResponse } from 'uni-response';
 
 import { env } from './config/env-config';
 import userRoutes from './features/user/routes/user.routes';
 import { apiErrorHandler, unmatchedRoutes } from './middleware/api-error.middleware';
 import { pinoLogger } from './middleware/pino-logger';
-import { hostWhitelist, rateLimiter } from './middleware/security.middleware';
+import { rateLimiter } from './middleware/security.middleware';
 
 const app: Application = express();
 
@@ -24,8 +25,8 @@ app.use(helmet());
 app.use(express.json());
 app.use(cors({ origin: allowedURLs })); // Restrict CORS to the configured whitelist
 
-app.get('/', hostWhitelist(allowedURLs), (req: Request, res: Response): void => {
-  res.json('');
+app.get('/', (req: Request, res: Response): void => {
+  res.json(unifiedResponse(true, 'ok'));
   return;
 });
 
