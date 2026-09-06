@@ -1,11 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+import { PrismaClient } from '../generated/prisma/client';
+import { env } from './env-config';
 
 export class PrismaService {
   private static instance: PrismaService | null = null;
   private prismaClient: PrismaClient;
 
   private constructor() {
-    this.prismaClient = new PrismaClient();
+    const adapter = new PrismaPg({ connectionString: env.DATABASE_URL });
+    this.prismaClient = new PrismaClient({ adapter });
   }
 
   // Singleton instance

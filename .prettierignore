@@ -6,6 +6,9 @@ coverage
 # Prisma migrations
 prisma/migrations
 
+# Generated Prisma Client
+src/generated
+
 # Logs and environment files
 logs
 *.log

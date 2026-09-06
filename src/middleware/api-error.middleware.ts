@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client';
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { unifiedResponse } from 'uni-response';
 
 import { ERROR } from '../constants/messages';
+import { Prisma } from '../generated/prisma/client';
 
 const checkContentType = (req: Request, res: Response, next: NextFunction) => {
   const contentType = req.get('Content-Type');

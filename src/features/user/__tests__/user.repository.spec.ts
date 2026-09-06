@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { PrismaClient } from '../../../generated/prisma/client';
 import { UserRepository } from '../repositories/user.repository';
 
 // ✅ Properly mock PrismaClient (must be a real constructor function, not an arrow function,
 // so `new PrismaClient()` works)
-vi.mock('@prisma/client', () => ({
+vi.mock('../../../generated/prisma/client', () => ({
   PrismaClient: vi.fn().mockImplementation(function PrismaClientMock() {
     return {
       user: {
@@ -21,7 +21,7 @@ describe('UserRepository', () => {
   let userRepository: UserRepository;
 
   beforeEach(() => {
-    prisma = new PrismaClient();
+    prisma = new PrismaClient({ adapter: {} as never });
     userRepository = new UserRepository(prisma);
   });
 
