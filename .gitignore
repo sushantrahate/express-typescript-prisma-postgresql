@@ -33,3 +33,6 @@ src/logs/*
 .husky/_
 
 .mcp.json
+
+# Claude Code local config
+.claude/
