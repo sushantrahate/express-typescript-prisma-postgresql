@@ -17,7 +17,7 @@ export default [
       'prisma',
       'prisma.config.ts',
       'src/generated',
-      'vitest.config.ts',
+      'vitest.config.mts',
       'vitest.setup.ts',
     ],
   },
