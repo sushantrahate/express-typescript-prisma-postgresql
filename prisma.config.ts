@@ -11,6 +11,8 @@ export default defineConfig({
   },
   datasource: {
     url: env('DATABASE_URL'),
-    shadowDatabaseUrl: env('SHADOW_DATABASE_URL'),
+    // Optional: env() throws at config-load time if the var is unset at all, so this
+    // needs a plain presence check rather than passing it through unconditionally.
+    ...(process.env.SHADOW_DATABASE_URL ? { shadowDatabaseUrl: env('SHADOW_DATABASE_URL') } : {}),
   },
 });
